@@ -7,9 +7,8 @@
     .bargraph {
       display: grid;
       width: 200px;
-      height: 100px;
-      padding: 10px;
-      transform: scaleY(3);
+      height: 300px;
+      margin: 20px;
       /*列方向上分成5份，每份占20%*/
       grid-template-columns: repeat(5, 20%);
     }
@@ -37,9 +36,18 @@
     .bargraph div:nth-child(5) {
       background: linear-gradient(to bottom, transparent 32%, #37c 0, #37c 63%, #3c7 0);
     }
+
+    .piegraph {
+      display: inline-block;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background-image: conic-gradient(#37c 30deg, #3c7 30deg, #3c7 65deg, orange 65deg, orange 110deg, #f73 110deg, #f73 200deg, #ccc 200deg);
+    }
   </style>
 </head>
 <body>
+<!--柱状图-->
 <div class="bargraph">
   <div></div>
   <div></div>
@@ -47,5 +55,12 @@
   <div></div>
   <div></div>
 </div>
+
+<!--饼状图-->
+<div class="piegraph"></div>
+
+<!--折线图-->
+<!--用高度很小的Div元素来模拟线段，然后用transform改变角度和位置-->
+<!--使用clip-path这样的高级属性，我们还能实现更复杂的图表，比如，用不同的颜色表示两个不同折线的面积-->
 </body>
 </html>
