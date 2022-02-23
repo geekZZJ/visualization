@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>canvas</title>
+  <style>
+    /*canvas {*/
+    /*  width: 256px;*/
+    /*  height: 256px;*/
+    /*}*/
+  </style>
+</head>
+<body>
+<canvas width="512" height="512"></canvas>
+
+<script>
+  const canvas = document.querySelector('canvas');
+  const context = canvas.getContext('2d');
+
+  // 设置状态API
+  context.fillStyle = 'red';
+  // 告诉Canvas我们现在绘制的路径
+  context.beginPath();
+
+  // 1.
+  // 绘制指令API
+  // context.rect(0.5 * canvas.width - 50, 0.5 * canvas.height - 50, 100, 100);
+
+
+  // 2.平移
+  context.translate(-50, -50);
+  context.rect(0.5 * canvas.width, 0.5 * canvas.height, 100, 100);
+  // 恢复状态
+  // context.translate(50, 50);
+
+  // 将绘制的内容真正输出到画布中
+  context.fill();
+</script>
+</body>
+</html>
