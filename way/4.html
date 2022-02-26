@@ -11,24 +11,28 @@
   const gl = canvas.getContext("webgl")
 
   /************ 着色器 **************/
+  // 顶点着色器
   const vertex = `
     attribute vec2 position;
+    varying vec3 color;
 
     void main(){
       gl_PointSize = 1.0;
-      gl_Position = vec4(position,1.0,1.0);
+      color = vec3(0.5 + position * 0.5, 0.0);
+      gl_Position = vec4(position*0.5,1.0,1.0);
     }
   `;
 
+  // 片元着色器
   const fragment = `
     precision mediump float;
+    varying vec3 color;
 
     void main(){
-      gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+      gl_FragColor = vec4(color,1.0);
     }
   `;
   /************ 着色器 **************/
-
     // 创建 WebGLShader 着色器对象
   const vertexShader = gl.createShader(gl.VERTEX_SHADER);
   gl.shaderSource(vertexShader, vertex);
@@ -65,7 +69,7 @@
   // 激活这个变量
   gl.enableVertexAttribArray(vPosition);
 
-  // 清楚画布内容
+  // 清除画布内容
   gl.clear(gl.COLOR_BUFFER_BIT);
   // 传入绘制模式  三角形为图元，顶点偏移量，顶点数量
   gl.drawArrays(gl.TRIANGLES, 0, points.length / 2);
