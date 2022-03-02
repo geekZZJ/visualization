@@ -63,12 +63,13 @@ export class Vector2D extends Array {
     return this.scale(1 / this.length);
   }
 
+  // 向量旋转
   rotate(rad) {
     const c = Math.cos(rad),
       s = Math.sin(rad);
     const [x, y] = this;
 
-    this.x = x * c + y * -s;
+    this.x = x * c - y * s;
     this.y = x * s + y * c;
 
     return this;
