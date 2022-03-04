@@ -60,6 +60,7 @@ export class Vector2D extends Array {
     return this.x * v.x + v.y * this.y;
   }
 
+  // 归一化
   normalize() {
     return this.scale(1 / this.length);
   }
