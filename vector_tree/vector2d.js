@@ -23,9 +23,10 @@ export class Vector2D extends Array {
     return Math.hypot(this.x, this.y);
   }
 
-  // get dir() {
-  //   return Math.atan2(this.y, this.x);
-  // }
+  // 与x轴的夹角
+  get dir() {
+    return Math.atan2(this.y, this.x);
+  }
 
   copy() {
     return new Vector2D(this.x, this.y);
