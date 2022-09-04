@@ -1,3 +1,13 @@
+// 生成随机颜色
+const randomColor = () => {
+  return {
+    r: Math.random() * 255,
+    g: Math.random() * 255,
+    b: Math.random() * 255,
+    a: Math.random() * 1,
+  };
+};
+
 // 获取canvas
 const getCanvas = (id) => {
   return document.getElementById(id);
