@@ -1,93 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>webgl</title>
-</head>
-<body>
-<canvas></canvas>
-<script>
-  const canvas = document.querySelector('canvas')
-  const gl = canvas.getContext("webgl")
+  <head>
+    <meta charset="UTF-8" />
+    <title>webgl</title>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script>
+      const canvas = document.querySelector("canvas");
+      const gl = canvas.getContext("webgl");
 
-  /************ 着色器 **************/
-  // 顶点着色器1
-  const vertex = `
-    attribute vec2 position;
+      /************ 着色器 **************/
+      // 顶点着色器1
+      const vertex = `
+        attribute vec2 position;
 
-    void main(){
-      gl_Position = vec4(position,0.0,1.0);
-    }
-  `;
+        void main(){
+          gl_Position = vec4(position,0.0,1.0);
+        }
+      `;
 
-  // 片元着色器
-  const fragment = `
-    precision lowp float;
+      // 片元着色器
+      const fragment = `
+        precision lowp float;
 
-    void main(){
-      gl_FragColor = vec4(1.0,0.0,0.0,1.0);
-    }
-  `;
+        void main(){
+          gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+        }
+      `;
 
-  // const vertex = `
-  //   attribute vec2 position;
-  //   varying vec3 color;
+      // const vertex = `
+      //   attribute vec2 position;
+      //   varying vec3 color;
 
-  //   void main(){
-  //     color = vec3(0.5 + position * 0.5, 0.0);
-  //     gl_Position = vec4(position,0.0,1.0);
-  //   }
-  // `;
+      //   void main(){
+      //     color = vec3(0.5 + position * 0.5, 0.0);
+      //     gl_Position = vec4(position,0.0,1.0);
+      //   }
+      // `;
 
-  // const fragment = `
-  //   precision lowp float;
-  //   varying vec3 color;
+      // const fragment = `
+      //   precision lowp float;
+      //   varying vec3 color;
 
-  //   void main(){
-  //     gl_FragColor = vec4(color,1.0);
-  //   }
-  // `;
-  /************ 着色器 **************/
-  // 创建 WebGLShader 着色器对象
-  const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-  gl.shaderSource(vertexShader, vertex);
-  gl.compileShader(vertexShader);
+      //   void main(){
+      //     gl_FragColor = vec4(color,1.0);
+      //   }
+      // `;
+      /************ 着色器 **************/
+      // 创建 WebGLShader 着色器对象
+      const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vertexShader, vertex);
+      gl.compileShader(vertexShader);
 
-  const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-  gl.shaderSource(fragmentShader, fragment);
-  gl.compileShader(fragmentShader);
+      const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fragmentShader, fragment);
+      gl.compileShader(fragmentShader);
 
-  // 创建 WebGLProgram 对象
-  const program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
+      // 创建 WebGLProgram 对象
+      const program = gl.createProgram();
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
 
-  gl.useProgram(program);
+      gl.useProgram(program);
 
-  // 定义三角形的三个顶点
-  const points = new Float32Array([
-    -1, -1,
-    0, 1,
-    1, -1,
-  ]);
+      // 定义三角形的三个顶点
+      const points = new Float32Array([-1, -1, 0, 1, 1, -1]);
 
-  // 定义好的数据写入 WebGL 缓冲区
-  const buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
+      // 定义好的数据写入 WebGL 缓冲区
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
 
-  // 获取顶点着色器中的的position
-  const vPosition = gl.getAttribLocation(program, 'position');
-  // 给变量设置长度和类型
-  gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
-  // 激活这个变量
-  gl.enableVertexAttribArray(vPosition);
+      // 获取顶点着色器中的的position
+      const vPosition = gl.getAttribLocation(program, "position");
+      // 激活这个变量
+      gl.enableVertexAttribArray(vPosition);
+      // 每次取两个数据
+      const size = 2;
+      // 每个数据的类型是32位浮点型
+      const type = gl.FLOAT;
+      // 不需要归一化数据
+      const normalize = false;
+      // 每次迭代运行需要移动数据数 * 每个数据所占内存 到下一个数据开始点。
+      const stride = 0;
+      // 从缓冲起始位置开始读取
+      const offset = 0;
+      // 将 vPosition 变量获取数据的缓冲区指向当前绑定的 buffer
+      gl.vertexAttribPointer(vPosition, size, type, normalize, stride, offset);
 
-  // 清除画布内容
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  // 传入绘制模式  三角形为图元，顶点偏移量，顶点数量
-  gl.drawArrays(gl.TRIANGLES, 0, points.length / 2);
-</script>
-</body>
+      // 清除画布内容
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      // 传入绘制模式  三角形为图元，顶点偏移量，顶点数量
+      gl.drawArrays(gl.TRIANGLES, 0, points.length / 2);
+    </script>
+  </body>
 </html>
