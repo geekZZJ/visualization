@@ -61,7 +61,7 @@
       // 找到顶点着色器中的变量position
       const vPosition = gl.getAttribLocation(program, "position");
       // 找到片元着色器中的变量u_Color
-      var u_Color = gl.getUniformLocation(program, "u_Color");
+      const u_Color = gl.getUniformLocation(program, "u_Color");
 
       gl.clearColor(0, 0, 0, 1.0);
       //用上一步设置的清空画布颜色清空画布。
