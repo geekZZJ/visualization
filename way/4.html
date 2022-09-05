@@ -5,13 +5,13 @@
     <title>webgl</title>
   </head>
   <body>
-    <canvas></canvas>
+    <canvas width="300" height="300"></canvas>
     <script>
       const canvas = document.querySelector("canvas");
       const gl = canvas.getContext("webgl");
 
       /************ 着色器 **************/
-      // 顶点着色器1
+      // 顶点着色器
       const vertex = `
         attribute vec2 position;
 
@@ -34,7 +34,7 @@
       //   varying vec3 color;
 
       //   void main(){
-      //     color = vec3(0.5 + position * 0.5, 0.0);
+      //     color = vec3(position*0.5+0.5, 0.0);
       //     gl_Position = vec4(position,0.0,1.0);
       //   }
       // `;
@@ -66,12 +66,20 @@
       gl.useProgram(program);
 
       // 定义三角形的三个顶点
-      const points = new Float32Array([-1, -1, 0, 1, 1, -1]);
+      const points = new Float32Array([100, 150, 150, 0, 200, 150]);
+      const positions = points.map((item, index) => {
+        if (index % 2 === 0) {
+          return (item / canvas.width) * 2.0 - 1.0;
+        } else {
+          return ((item / canvas.height) * 2.0 - 1.0) * -1.0;
+        }
+      });
+      console.log(positions)
 
       // 定义好的数据写入 WebGL 缓冲区
       const buffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
       // 获取顶点着色器中的的position
       const vPosition = gl.getAttribLocation(program, "position");
@@ -81,7 +89,7 @@
       const size = 2;
       // 每个数据的类型是32位浮点型
       const type = gl.FLOAT;
-      // 不需要归一化数据
+      // 我们自己在着色器中进行的归一化处理，所以此处设置为false
       const normalize = false;
       // 每次迭代运行需要移动数据数 * 每个数据所占内存 到下一个数据开始点。
       const stride = 0;
@@ -90,6 +98,8 @@
       // 将 vPosition 变量获取数据的缓冲区指向当前绑定的 buffer
       gl.vertexAttribPointer(vPosition, size, type, normalize, stride, offset);
 
+      // 设置清屏颜色为黑色
+      gl.clearColor(0, 0, 0, 1);
       // 清除画布内容
       gl.clear(gl.COLOR_BUFFER_BIT);
       // 传入绘制模式  三角形为图元，顶点偏移量，顶点数量
