@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>基本图元绘制：线段</title>
+    <link rel="stylesheet" href="../css/common.css" />
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script type="shader-source" id="fragmentShader"></script>
+    <script src="../utils/webgl-helper.js"></script>
+    <script>
+      const vertexShaderSource = `
+        precision mediump float;
+        attribute vec2 position;
+
+        void main(){
+          gl_Position = vec4(position, 0.0, 1.0);
+        }
+      `;
+
+      const fragmentShaderSource = `
+        precision mediump float;
+        uniform vec4 u_Color;
+
+        void main(){
+          vec4 color = u_Color / vec4(255, 255, 255, 1);
+          gl_FragColor = color;
+        }
+      `;
+
+      const positions = [];
+
+      // 获取canvas
+      const canvas = getCanvas("canvas");
+      // 设置canvas尺寸为满屏
+      resizeCanvas(canvas);
+      // 获取绘图上下文
+      const gl = getWebGLContext(canvas);
+      // 创建顶点着色器
+      const vertexShader = createShaderFromString(
+        gl,
+        gl.VERTEX_SHADER,
+        vertexShaderSource
+      );
+      // 创建片元着色器
+      let fragmentShader = createShaderFromString(
+        gl,
+        gl.FRAGMENT_SHADER,
+        fragmentShaderSource
+      );
+
+      // 创建着色器程序
+      const program = createSimpleProgram(gl, vertexShader, fragmentShader);
+      // 使用该着色器程序
+      gl.useProgram(program);
+
+      const position = gl.getAttribLocation(program, "position");
+      const u_Color = gl.getUniformLocation(program, "u_Color");
+      gl.uniform4f(u_Color, 255, 0, 0, 1);
+
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+      gl.enableVertexAttribArray(position);
+      // 一个顶点信息包含两个数据
+      const size = 2;
+      // 顶点信息的数据类型为 浮点型
+      const type = gl.FLOAT;
+      // 我们自己在着色器中进行的归一化处理，所以此处设置为false
+      const normalize = false;
+      // 步长为默认值 0 ，即按照 size*type的值
+      const stride = 0;
+      // 顶点信息从 buffer 中取数据时的偏移值
+      const offset = 0;
+      // 顶点如何从 buffer 中取数据
+      gl.vertexAttribPointer(position, size, type, normalize, stride, offset);
+
+      const render = (gl) => {
+        // 设置清屏颜色为黑色
+        gl.clearColor(0, 0, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        // const primitiveType = gl.LINES;
+        // const primitiveType = gl.LINE_STRIP;
+        const primitiveType = gl.LINE_LOOP;
+        const drawOffset = 0;
+        // gl.drawArrays(primitiveType, drawOffset, positions.length / 2);
+        // gl.drawArrays(primitiveType, drawOffset, positions.length / 2);
+        gl.drawArrays(primitiveType, drawOffset, positions.length / 2);
+      };
+
+      render(gl);
+
+      canvas.addEventListener("mouseup", (e) => {
+        const x = (e.pageX / canvas.width) * 2.0 - 1.0;
+        const y = ((e.pageY / canvas.height) * 2.0 - 1.0) * -1.0;
+        positions.push(x, y);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array(positions),
+          gl.DYNAMIC_DRAW
+        );
+        // 重新渲染
+        render(gl);
+      });
+    </script>
+  </body>
+</html>
