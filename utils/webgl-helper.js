@@ -87,3 +87,19 @@ const createProgramFromString = (gl, vertexString, fragmentString) => {
   // 创建着色器程序
   return createSimpleProgram(gl, vertexShader, fragmentShader);
 };
+
+const createBuffer = (gl, attribute, vertexAttribPointer) => {
+  const { size, type, normalize, stride, offset } = vertexAttribPointer;
+  gl.enableVertexAttribArray(attribute);
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.vertexAttribPointer(
+    attribute,
+    size,
+    type || gl.FLOAT,
+    normalize || false,
+    stride || 0,
+    offset || 0
+  );
+  return buffer;
+};
