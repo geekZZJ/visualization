@@ -88,6 +88,7 @@ const createProgramFromString = (gl, vertexString, fragmentString) => {
   return createSimpleProgram(gl, vertexShader, fragmentShader);
 };
 
+// 创建buffer
 const createBuffer = (gl, attribute, vertexAttribPointer) => {
   const { size, type, normalize, stride, offset } = vertexAttribPointer;
   gl.enableVertexAttribArray(attribute);
