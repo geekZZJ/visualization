@@ -93,7 +93,7 @@
     const drawOffset = 0;
     if (positions.length > 0) {
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-      gl.drawArrays(primitiveType, drawOffset, positions.length / 2);
+      gl.drawArrays(primitiveType, drawOffset, positions.length / 6);
     }
   };
 
