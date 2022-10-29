@@ -36,8 +36,6 @@
     30, 30, 255, 0, 0, 1,    // V0
     30, 300, 255, 0, 0, 1,   // V1
     300, 300, 255, 0, 0, 1,  // V2
-    30, 30, 0, 255, 0, 1,    // V0
-    300, 300, 0, 255, 0, 1,  // V2
     300, 30, 0, 255, 0, 1    // V3
   ]
   // 存储顶点索引的数组
@@ -99,11 +97,9 @@
     // 设置清除背景颜色为黑色
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    const primitiveType = gl.TRIANGLES;
-    const drawOffset = 0;
     if (positions.length > 0) {
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-      gl.drawArrays(primitiveType, drawOffset, positions.length / 2);
+      gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
     }
   };
 
