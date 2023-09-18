@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>绘制环形</title>
+  <link rel="stylesheet" href="../css/common.css" />
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+  <script src="../utils/webgl-helper.js"></script>
+  <script>
+    const vertexShaderSource = `
+    precision mediump float;
+    attribute vec2 position;
+    attribute vec4 a_Color;
+    varying vec4 v_Color;
+
+    void main(){
+      gl_Position = vec4(position, 0.0, 1.0);
+      v_Color = a_Color;
+    }
+  `;
+
+    const fragmentShaderSource = `
+    precision mediump float;
+    varying vec4 v_Color;
+
+    void main(){
+      vec4 color = v_Color / vec4(255, 255, 255, 1);
+      gl_FragColor = color;
+    }
+  `;
+
+    function createRingVertex(x, y, innerRadius, outerRadius, n) {
+      const positions = [];
+      let color = randomColor();
+      for (let i = 0; i <= n; i++) {
+        if (i % 2 == 0) {
+          color = randomColor();
+        }
+        const angle = i * Math.PI * 2 / n;
+        positions.push(x + innerRadius * Math.sin(angle), y + innerRadius * Math.cos(angle), color.r, color.g, color.b, color.a);
+        positions.push(x + outerRadius * Math.sin(angle), y + outerRadius * Math.cos(angle), color.r, color.g, color.b, color.a);
+      }
+      const indices = [];
+      for (let i = 0; i < n; i++) {
+        let p0 = i * 2;
+        let p1 = i * 2 + 1;
+        let p2 = (i + 1) * 2 + 1;
+        let p3 = (i + 1) * 2;
+        if (i == n - 1) {
+          p2 = 1;
+          p3 = 0;
+        }
+        indices.push(p0, p1, p2, p2, p3, p0);
+      }
+      return {
+        positions: positions,
+        indices: indices
+      };
+    }
+
+    // 定义组成矩形的两个三角形，共计四个顶点，每个顶点包含2个坐标分量和4个颜色分量，其中 V0,V1,V2代表左下角三角形，V1,V2,V3代表右上角三角形。
+    let vertex = createRingVertex(100, 100, 20, 80, 100);
+    let positions = vertex.positions
+
+    // 获取canvas
+    const canvas = getCanvas("canvas");
+    // 设置canvas尺寸为满屏
+    resizeCanvas(canvas);
+    // 获取绘图上下文
+    const gl = getWebGLContext(canvas);
+    // 创建顶点着色器
+    const vertexShader = createShaderFromString(
+      gl,
+      gl.VERTEX_SHADER,
+      vertexShaderSource
+    );
+    // 创建片元着色器
+    const fragmentShader = createShaderFromString(
+      gl,
+      gl.FRAGMENT_SHADER,
+      fragmentShaderSource
+    );
+
+    // 创建着色器程序
+    const program = createSimpleProgram(gl, vertexShader, fragmentShader);
+    // 使用该着色器程序
+    gl.useProgram(program);
+
+    const handlePos = () => {
+      positions = positions.map((item, index) => {
+        if (index % 6 === 0) {
+          item = (item / canvas.width) * 2.0 - 1.0;
+        } else if (index % 6 === 1) {
+          item = ((item / canvas.height) * 2.0 - 1.0) * -1.0;
+        }
+        return item
+      })
+    }
+    handlePos()
+
+    const position = gl.getAttribLocation(program, "position");
+    const a_Color = gl.getAttribLocation(program, "a_Color");
+
+    gl.enableVertexAttribArray(position);
+    gl.enableVertexAttribArray(a_Color);
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 24, 0);
+    gl.vertexAttribPointer(a_Color, 4, gl.FLOAT, false, 24, 8);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    // 定义绘制索引数组
+    const indices = vertex.indices;
+    // 创建索引缓冲区
+    const indicesBuffer = gl.createBuffer();
+    // 绑定索引缓冲区
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer);
+    // 向索引缓冲区传递索引数据
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+    const render = (gl) => {
+      // 设置清除背景颜色为黑色
+      gl.clearColor(0, 0, 0, 1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      if (positions.length > 0) {
+        gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+      }
+    };
+
+    render(gl);
+  </script>
+</body>
+
+</html>
