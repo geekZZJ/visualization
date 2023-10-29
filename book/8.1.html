@@ -65,8 +65,12 @@
     gl.useProgram(program);
 
     const positions = [
-      30, 30, 0, 0, 0, 300, 0, 1, 300, 300, 1, 1, 30, 30,
-      0, 0, 300, 300, 1, 1, 300, 30, 1, 0
+      30, 30, 0, 0,
+      30, 300, 0, 1,
+      300, 300, 1, 1,
+      30, 30, 0, 0,
+      300, 300, 1, 1,
+      300, 30, 1, 0
     ];
 
     // 找到着色器中的全局变量 u_Texture;
@@ -79,8 +83,10 @@
     gl.enableVertexAttribArray(a_Position);
     gl.enableVertexAttribArray(a_Uv);
 
+    // 创建缓冲区
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    // 设置 a_Position 属性从缓冲区读取数据方式
     gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 16, 0);
     gl.vertexAttribPointer(a_Uv, 2, gl.FLOAT, false, 16, 8);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
@@ -90,7 +96,7 @@
       gl.clearColor(0, 0, 0, 1);
       gl.clear(gl.COLOR_BUFFER_BIT);
       if (positions.length > 0) {
-        gl.drawElements(gl.TRIANGLES, 0, positions.length / 4);
+        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
       }
     };
 
